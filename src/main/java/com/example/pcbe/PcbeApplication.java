@@ -17,6 +17,8 @@ public class PcbeApplication {
 		JSONParser parser = new JSONParser();
 		String user = "", pass = "", dbURL = "";
 
+		// TODO: create a serverOrchestrator class in the com.example.pcbe package
+
 		try {
 			JSONObject obj = (JSONObject) parser.parse(
 					new FileReader("src/main/resources/static/AppSettings.json")
@@ -36,6 +38,10 @@ public class PcbeApplication {
 		} catch (SQLException e) {
 			System.out.println(e);
 		}
+
+//		BasicApp coffeeShopApp = CoffeeShopApp.getInstance("La colt");
+//		System.out.println(coffeeShopApp.getClass());
+//		System.out.println(((CoffeeShopApp) coffeeShopApp).getCoffeeShop().toString());
 	}
 
 }

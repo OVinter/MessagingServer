@@ -11,7 +11,8 @@ import java.util.UUID;
 public final class CoffeeShop {
 
     private static  volatile CoffeeShop instance;
-    private UUID id;
+    private int id;
+    private static int count = 0;
     private String name;
     private ArrayList<Coffee> coffees;
     // one user - Coffee Admin
@@ -19,7 +20,7 @@ public final class CoffeeShop {
 
     private CoffeeShop(String name) {
         this.name = name;
-        this.id = UUID.randomUUID();
+        this.id = ++count;
         this.coffees = new ArrayList<>(5);
         this.user = null;
     }
@@ -57,7 +58,7 @@ public final class CoffeeShop {
         this.coffees.remove(coffee);
     }
 
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 

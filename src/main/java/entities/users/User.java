@@ -7,12 +7,13 @@ public class User {
 
     private String name;
     private UserType userType;
-    private UUID id;
+    private int id;
+    private static int count = 0;
 
     public User(String name, UserType userType) {
         this.name = name;
         this.userType = userType;
-        this.id = UUID.randomUUID();
+        this.id = ++count;
     }
 
     public String getName() {
@@ -31,7 +32,7 @@ public class User {
         this.userType = userType;
     }
 
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 

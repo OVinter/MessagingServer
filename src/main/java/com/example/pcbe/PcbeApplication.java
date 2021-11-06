@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import consumer.Consumer;
 import entities.Coffee;
 import entities.users.User;
 import entities.users.UserType;
@@ -17,7 +18,7 @@ import org.json.simple.parser.ParseException;
 
 public class PcbeApplication {
 
-	public static void main(String[] args){
+	public static void main(String[] args) throws InterruptedException {
 
 		JSONParser parser = new JSONParser();
 		String user = "", pass = "", dbURL = "";
@@ -46,6 +47,10 @@ public class PcbeApplication {
 
 		createTable(dbContext);
 		populateTable(dbContext);
+
+		Producer.main(args);
+		Consumer.main(args);
+
 //		BasicApp coffeeShopApp = CoffeeShopApp.getInstance("La colt");
 //		System.out.println(coffeeShopApp.getClass());
 //		System.out.println(((CoffeeShopApp) coffeeShopApp).getCoffeeShop().toString());

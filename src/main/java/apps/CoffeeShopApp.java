@@ -49,9 +49,9 @@ public final class CoffeeShopApp implements BasicApp {
     // get the singleton instance of the CoffeeShop
     public void initialize(String shopName) {
         // TODO : remove lines 43-50 and line 52
-        Coffee coffee1 = new Coffee("latte");
-        Coffee coffee2 = new Coffee("espresso");
-        Coffee coffee3 = new Coffee("latte");
+        Coffee coffee1 = new Coffee("latte",10);
+        Coffee coffee2 = new Coffee("espresso",7);
+        Coffee coffee3 = new Coffee("latte",10);
 
         ArrayList<Coffee> coffees = new ArrayList<>();
         coffees.add(coffee1);

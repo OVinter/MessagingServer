@@ -1,9 +1,6 @@
 package com.example.pcbe;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public final class DbContext {
 
@@ -39,6 +36,13 @@ public final class DbContext {
         Statement stmt = conn.createStatement();
         System.out.println(stmt.getConnection().toString());
         return stmt;
+    }
+
+    public DatabaseMetaData getDbMetaData() throws SQLException{
+        Connection conn = DriverManager.getConnection(dbURL, user, pass);
+        DatabaseMetaData metaData = conn.getMetaData();
+        System.out.println(metaData.toString());
+        return metaData;
     }
 
 }

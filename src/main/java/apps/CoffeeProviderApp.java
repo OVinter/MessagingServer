@@ -4,7 +4,7 @@ import entities.messages.Message;
 import entities.users.User;
 import entities.users.UserType;
 
-public class CoffeeProviderApp implements BasicApp {
+public class CoffeeProviderApp{
 
     private User coffeeProvider;
 
@@ -16,12 +16,10 @@ public class CoffeeProviderApp implements BasicApp {
 
     public CoffeeProviderApp() {}
 
-    @Override
     public void receiveMessage(Message message) {
         // TODO
     }
 
-    @Override
     public void sendMessage(Message message) {
         // TODO
     }
@@ -32,5 +30,9 @@ public class CoffeeProviderApp implements BasicApp {
 
     public void setCoffeeProvider(String name) {
         this.coffeeProvider = new User(name, UserType.PROVIDER);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("CoffeeProvider App");
     }
 }

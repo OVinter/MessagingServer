@@ -6,7 +6,7 @@ import entities.messages.Message;
 
 import java.util.ArrayList;
 
-public final class CoffeeShopApp implements BasicApp {
+public final class CoffeeShopApp {
 
     // one instance of CoffeeShop
     private CoffeeShop coffeeShop;
@@ -19,12 +19,10 @@ public final class CoffeeShopApp implements BasicApp {
 
     public CoffeeShopApp() {}
 
-    @Override
     public void receiveMessage(Message message) {
         // TODO
     }
 
-    @Override
     public void sendMessage(Message message) {
         // TODO
     }
@@ -63,5 +61,9 @@ public final class CoffeeShopApp implements BasicApp {
 
     public CoffeeShop getCoffeeShop() {
         return coffeeShop;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("CoffeeShop App");
     }
 }

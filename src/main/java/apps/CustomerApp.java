@@ -6,7 +6,7 @@ import entities.users.UserType;
 
 import java.util.ArrayList;
 
-public class CustomerApp implements BasicApp{
+public class CustomerApp {
 
     private ArrayList<User> user;
 
@@ -14,14 +14,12 @@ public class CustomerApp implements BasicApp{
         this.user = new ArrayList<>(3);
     }
 
-    @Override
     public void receiveMessage(Message message) {
-
+        // TODO
     }
 
-    @Override
     public void sendMessage(Message message) {
-
+        // TODO
     }
 
     public void addUser(String name) {
@@ -34,5 +32,9 @@ public class CustomerApp implements BasicApp{
 
     public void setUser(ArrayList<User> user) {
         this.user = user;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Customer App");
     }
 }

@@ -1,32 +1,37 @@
 package appsUtilities;
 
-import entities.Coffee;
 import entities.users.User;
 import entities.users.UserType;
+import lombok.*;
 
-import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 // TODO: a table
+@Data
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 public final class CoffeeShop {
 
-    private static  volatile CoffeeShop instance;
+    private static volatile CoffeeShop instance;
     private int id;
     private static int count = 0;
     private String name;
-    private ArrayList<Coffee> coffees;
-    // one user - Coffee Admin
+    private AtomicInteger nrOfCoffees;
+//    one user - Coffee Admin
     private User user;
+    private AtomicInteger money;
 
     private CoffeeShop(String name) {
         this.name = name;
         this.id = ++count;
-        this.coffees = new ArrayList<>(5);
+        this.nrOfCoffees = new AtomicInteger(10);
         this.user = null;
+        this.money = new AtomicInteger(100);
     }
 
     // we need singleton instance for CoffeeShop
     public static CoffeeShop getInstance(String name) {
-
         CoffeeShop resultCoffeeShop = instance;
 
         if (resultCoffeeShop != null) {
@@ -41,42 +46,12 @@ public final class CoffeeShop {
         }
     }
 
-    public ArrayList<Coffee> getCoffees() {
-        return coffees;
-    }
-
-    public void setCoffees(ArrayList<Coffee> coffees) {
-        this.coffees = coffees;
-    }
-
-    public void addNewCoffee(Coffee coffee) {
-        this.coffees.add(coffee);
-    }
-
-    public void deleteCoffee(Coffee coffee) {
-        this.coffees.remove(coffee);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
     public void setUser(String name) {
         this.user.setName(name);
         this.user.setUserType(UserType.COFFEE_ADMIN);
     }
 
-    @Override
-    public String toString() {
-        return "CoffeeShop{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", coffees=" + coffees +
-                ", user=" + user +
-                '}';
+    public void setNrOfCoffees(int coffees) {
+        this.nrOfCoffees.addAndGet(coffees);
     }
 }

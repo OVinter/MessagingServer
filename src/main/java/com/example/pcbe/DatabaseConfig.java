@@ -55,12 +55,12 @@ public final class DatabaseConfig {
         try(Statement stmt = dbContext.getDbConnection())
         {
             // Execute a query
-            System.out.println("Inserting records into the table...");
-            String sql = String.format("INSERT INTO COFFEE VALUES (%d,\"%s\",%f)",coffee1.getId(),coffee1.getName(),coffee1.getPrice());
-            stmt.executeUpdate(sql);
-            sql = String.format("INSERT INTO COFFEE VALUES (%d,\"%s\",%f)",coffee2.getId(),coffee2.getName(),coffee2.getPrice());
-            stmt.executeUpdate(sql);
-            sql = String.format("INSERT INTO USERS VALUES (%d,\"%s\",\"%s\")",user1.getId(),user1.getName(),user1.getUserType().toString());
+//            System.out.println("Inserting records into the table...");
+//            String sql = String.format("INSERT INTO COFFEE VALUES (%d,\"%s\",%f)",coffee1.getId(),coffee1.getName(),coffee1.getPrice());
+//            stmt.executeUpdate(sql);
+//            sql = String.format("INSERT INTO COFFEE VALUES (%d,\"%s\",%f)",coffee2.getId(),coffee2.getName(),coffee2.getPrice());
+//            stmt.executeUpdate(sql);
+            String sql = String.format("INSERT INTO USERS VALUES (%d,\"%s\",\"%s\")",user1.getId(),user1.getName(),user1.getUserType().toString());
             stmt.executeUpdate(sql);
             System.out.println("Inserted records into the table...");
         } catch (SQLException e) {

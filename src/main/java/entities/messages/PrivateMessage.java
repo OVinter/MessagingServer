@@ -1,19 +1,25 @@
 package entities.messages;
 
-import java.util.Date;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-public class PrivateMessage extends Message {
+@Data
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+public class PrivateMessage {
 
-    private Date timestamp;
+    private Long timestamp;
     private String destination;
-    private PrivateMessageType type;
+    private PrivateMessageType typePrivate;
+    private String payload;
 
-    public PrivateMessage(String payload, Date timestamp, String destination, PrivateMessageType type) {
-        super(payload);
+    public PrivateMessage(String payload, Long timestamp, String destination, PrivateMessageType typePrivate) {
+        this.payload = payload;
         this.timestamp = timestamp;
         this.destination = destination;
-        this.type = type;
+        this.typePrivate = typePrivate;
     }
-
-
 }

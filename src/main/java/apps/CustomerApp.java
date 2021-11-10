@@ -1,6 +1,6 @@
 package apps;
 
-import entities.messages.Message;
+import entities.messages.PrivateMessage;
 import entities.users.User;
 import entities.users.UserType;
 
@@ -14,11 +14,11 @@ public class CustomerApp {
         this.user = new ArrayList<>(3);
     }
 
-    public void receiveMessage(Message message) {
+    public void receiveMessage() {
         // TODO
     }
 
-    public void sendMessage(Message message) {
+    public void sendMessage(PrivateMessage message) {
         // TODO
     }
 

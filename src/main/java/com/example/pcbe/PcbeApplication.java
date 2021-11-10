@@ -1,7 +1,12 @@
 package com.example.pcbe;
 
+import apps.CoffeeProviderApp;
+import consumer.Consumer;
+import entities.messages.PrivateMessage;
+
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 // this is the server class
 public class PcbeApplication {
@@ -23,6 +28,8 @@ public class PcbeApplication {
 
 //		Producer.main(args);
 //		Consumer.main(args);
+		CoffeeProviderApp.main(args);
+		Consumer.main(args);
 
 //		BasicApp coffeeShopApp = CoffeeShopApp.getInstance("La colt");
 //		System.out.println(coffeeShopApp.getClass());

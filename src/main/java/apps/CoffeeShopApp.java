@@ -2,17 +2,28 @@ package apps;
 
 import appsUtilities.CoffeeShop;
 import com.example.pcbe.DbContext;
+import com.example.pcbe.Producer;
 import entities.Coffee;
 import entities.messages.Message;
+import entities.messages.PrivateMessage;
+import entities.messages.PrivateMessageType;
 import entities.users.User;
 import entities.users.UserType;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.protocol.types.Field;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLOutput;
 import java.sql.Statement;
+import java.time.DateTimeException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Properties;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 public final class CoffeeShopApp {
 
@@ -101,9 +112,30 @@ public final class CoffeeShopApp {
         //TODO return null instead of new user
     }
 
-    public static void main(String[] args) {
+    public static void sendMessage(PrivateMessage message, Properties props) throws InterruptedException {
+        KafkaProducer<String, String> coffeeShopAdmin = new KafkaProducer<>(props);
+        ProducerRecord<String, String> data = new ProducerRecord<>("Coffee Shop test message",0,"1",message.toString());
+        coffeeShopAdmin.send(data);
+        Thread.sleep(1L);
+        coffeeShopAdmin.close();
+    }
+
+    public static void main(String[] args) throws InterruptedException {
 
         System.out.println(getUser("Cornel"));
+
+        Properties props = new Properties();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+
+        sendMessage(
+                new PrivateMessage("Da-mi cafea",
+                                    System.currentTimeMillis(),
+                                    "sss",
+                                    PrivateMessageType.COFFEE_MESSAGE
+                ),
+                props);
 
         System.out.println("CoffeeShop App");
     }

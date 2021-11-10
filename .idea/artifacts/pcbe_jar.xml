@@ -1,4 +1,13 @@
 <component name="ArtifactManager">
+  <artifact type="jar" name="pcbe:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/pcbe_jar</output-path>
+    <root id="archive" name="pcbe.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="pcbe" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.12.5/jackson-datatype-jdk8-2.12.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/kafka/kafka-clients/2.7.1/kafka-clients-2.7.1.jar" path-in-jar="/" />
   <artifact type="jar" name="MessagingServer:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/MessagingServer_jar</output-path>
     <root id="archive" name="MessagingServer.jar">

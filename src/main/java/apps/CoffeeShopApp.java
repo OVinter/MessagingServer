@@ -52,6 +52,7 @@ public final class CoffeeShopApp {
         coffeeShop.setNrOfCoffees(10);
     }
 
+
     public CoffeeShop getCoffeeShop() {
         return coffeeShop;
     }

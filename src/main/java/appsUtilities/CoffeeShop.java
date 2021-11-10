@@ -5,7 +5,6 @@ import entities.users.User;
 import entities.users.UserType;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 // TODO: a table
 public final class CoffeeShop {

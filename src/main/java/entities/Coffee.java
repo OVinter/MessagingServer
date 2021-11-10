@@ -1,8 +1,5 @@
 package entities;
 
-import java.util.Objects;
-import java.util.UUID;
-
 // TODO: a table
 public class Coffee {
 

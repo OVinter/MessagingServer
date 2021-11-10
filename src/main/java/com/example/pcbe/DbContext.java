@@ -1,6 +1,14 @@
 package com.example.pcbe;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Optional;
 
 public final class DbContext {
 
@@ -15,7 +23,32 @@ public final class DbContext {
         DbContext.pass = pass;
     }
 
-    public static DbContext getInstance(String dbURL, String user, String pass) {
+    public static DbContext getInstance() {
+
+        JSONParser parser = new JSONParser();
+        String user = "", pass = "", dbURL = "";
+
+        // to know if we run from ide or from a jar (for paths reason)
+        // if you want to run the program from jar you need to copy the AppSettings.json
+        // file into the MessagingServer_jar directory
+        String protocol = Optional.ofNullable(PcbeApplication.class.getResource("").getProtocol())
+                .orElse("");
+
+        try {
+            File file = new File("AppSettings.json");
+            if("file".equals(protocol)) {
+                file = new File("src/main/resources/static/AppSettings.json");
+            }
+
+            JSONObject obj = (JSONObject) parser.parse(
+                    new FileReader(file)
+            );
+            user = (String) obj.get("user");
+            pass = (String) obj.get("pass");
+            dbURL = (String) obj.get("dbURL");
+        } catch (IOException | ParseException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        }
 
         DbContext resultDb = instance;
 

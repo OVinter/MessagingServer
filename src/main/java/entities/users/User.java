@@ -1,7 +1,5 @@
 package entities.users;
 
-import java.util.UUID;
-
 // TODO: a table
 public class User {
 

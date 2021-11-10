@@ -50,26 +50,10 @@ public class JarRunner {
         return "NO_TYPE";
     }
 
-    private static UserType getUserTypeFromString(String type)
-    {
-        switch (type)
-        {
-            case "CUSTOMER":
-                return UserType.CUSTOMER;
-            case "SHOP":
-                return UserType.COFFEE_ADMIN;
-            case "PROVIDER":
-                return UserType.PROVIDER;
-            default:
-                System.out.println("Not a valid type");
-        }
-        return null;
-    }
-
-    public static void addUserToDb(String username, UserType userType)
+    public static void addUserToDb(String username)
     {
         DbContext dbContext = DbContext.getInstance();
-        User newUser = new User(username, userType);
+        User newUser = new User(username, UserType.CUSTOMER);
 
         try(Statement stmt = dbContext.getDbConnection())
         {
@@ -102,9 +86,7 @@ public class JarRunner {
                     case 2:
                         System.out.println("Name : ");
                         username = sc.next();
-                        System.out.println("Type [CUSTOMER / SHOP / PROVIDER]: ");
-                        type = sc.next();
-                        addUserToDb(username, getUserTypeFromString(type));
+                        addUserToDb(username);
                         break;
                     case 3:
                         System.out.println("Exit");

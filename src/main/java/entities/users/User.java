@@ -14,6 +14,14 @@ public class User {
         this.id = ++count;
     }
 
+    public User(String name, UserType userType, int id) {
+        this.name = name;
+        this.userType = userType;
+        this.id = id;
+    }
+
+    public  User() {}
+
     public String getName() {
         return name;
     }

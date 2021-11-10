@@ -1,56 +1,24 @@
 package entities.messages;
 
-import java.util.Date;
-import java.util.Objects;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-public class TopicMessage extends Message{
+@Data
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+public class TopicMessage {
 
-    private TopicMessageType type;
-    private Date timestamp;
+    private TopicMessageType typeTopic;
+    private Long timestamp;
+    private String payload;
 
-    public TopicMessage(String payload, TopicMessageType type, Date timestamp) {
-        super(payload);
-        this.type = type;
+    public TopicMessage(String payload, TopicMessageType typeTopic, Long timestamp) {
+        this.payload = payload;
+        this.typeTopic = typeTopic;
         this.timestamp = timestamp;
     }
 
-    public TopicMessageType getType() {
-        return type;
-    }
-
-    public void setType(TopicMessageType type) {
-        this.type = type;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    @Override
-    public String toString() {
-        return "TopicMessage{" +
-                "type=" + type +
-                ", timestamp=" + timestamp +
-                "} " + super.toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        TopicMessage that = (TopicMessage) o;
-        return type == that.type && Objects.equals(timestamp, that.timestamp);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, timestamp);
-    }
-
-    public void getDatee(){}
 }

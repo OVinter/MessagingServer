@@ -1,6 +1,12 @@
 package entities;
 
+import lombok.*;
+
 // TODO: a table
+@Data
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
 public class Coffee {
 
     private String name;
@@ -12,30 +18,5 @@ public class Coffee {
         this.name = name;
         this.id = ++count;
         this.price = price;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public float getPrice() { return price;}
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPrice(float price) {this.price = price;}
-
-    @Override
-    public String toString() {
-        return "Coffee{" +
-                "name='" + name + '\'' +
-                ", id=" + id +
-                ", price=" + price +
-                '}';
     }
 }

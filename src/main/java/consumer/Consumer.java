@@ -1,5 +1,8 @@
 package consumer;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import entities.messages.PrivateMessage;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;

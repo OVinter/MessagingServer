@@ -4,6 +4,7 @@ import appsUtilities.CoffeeShop;
 import com.example.pcbe.DbContext;
 import com.example.pcbe.Producer;
 import entities.Coffee;
+import entities.messages.PrivateMessage;
 import entities.messages.Message;
 import entities.messages.PrivateMessage;
 import entities.messages.PrivateMessageType;
@@ -38,12 +39,11 @@ public final class CoffeeShopApp {
 
     public CoffeeShopApp() {}
 
-    public void receiveMessage(Message message) {
+    public void receiveMessage() {
         // TODO
-
     }
 
-    public void sendMessage(Message message) {
+    public void sendMessage(PrivateMessage message) {
         // TODO
     }
 
@@ -67,17 +67,11 @@ public final class CoffeeShopApp {
     // get the singleton instance of the CoffeeShop
     public void initialize(String shopName) {
         // TODO : remove lines 43-50 and line 52
-        Coffee coffee1 = new Coffee("latte",10);
-        Coffee coffee2 = new Coffee("espresso",7);
-        Coffee coffee3 = new Coffee("latte",10);
 
-        ArrayList<Coffee> coffees = new ArrayList<>();
-        coffees.add(coffee1);
-        coffees.add(coffee2);
-        coffees.add(coffee3);
         this.coffeeShop = CoffeeShop.getInstance(shopName);
-        coffeeShop.setCoffees(coffees);
+        coffeeShop.setNrOfCoffees(10);
     }
+
 
     public CoffeeShop getCoffeeShop() {
         return coffeeShop;

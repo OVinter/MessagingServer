@@ -3,13 +3,16 @@ package apps;
 import appsUtilities.CoffeeShop;
 import com.example.pcbe.DbContext;
 import com.example.pcbe.Producer;
+import com.google.gson.Gson;
 import entities.Coffee;
 import entities.messages.PrivateMessage;
-import entities.messages.Message;
 import entities.messages.PrivateMessage;
 import entities.messages.PrivateMessageType;
 import entities.users.User;
 import entities.users.UserType;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -20,10 +23,14 @@ import java.sql.SQLException;
 import java.sql.SQLOutput;
 import java.sql.Statement;
 import java.time.DateTimeException;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static appsUtilities.Utilities.getKafkaProps;
 import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 public final class CoffeeShopApp {
@@ -31,6 +38,8 @@ public final class CoffeeShopApp {
     // one instance of CoffeeShop
     private CoffeeShop coffeeShop;
     private static volatile CoffeeShopApp instance;
+    private static boolean stillRunning = true;
+    private static AtomicInteger messageCounter;
 
     // if a user who is a COFFEE_ADMIN and logs in, then we create new instance of CoffeeProviderApp
 //    private CoffeeShopApp(String shopName) {
@@ -39,12 +48,63 @@ public final class CoffeeShopApp {
 
     public CoffeeShopApp() {}
 
-    public void receiveMessage() {
+    public static void receiveMessage() {
         // TODO
+        System.out.println(getKafkaProps(true));
+        KafkaConsumer consumer = new KafkaConsumer(getKafkaProps(true));
+        consumer.subscribe(Arrays.asList("providerResponseTest"));
+        new Thread(() -> {
+            while (stillRunning) {
+                ConsumerRecords<String, String> recs = consumer.poll(Duration.ofMillis(10));
+                if (!(recs.count() == 0)) {
+                    for (ConsumerRecord<String, String> rec : recs) {
+                        PrivateMessage privateMessage = new Gson().fromJson(rec.value(), PrivateMessage.class);
+                        System.out.println("---" + privateMessage);
+                        messageCounter.incrementAndGet();
+                        System.out.println("received" + messageCounter);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
-    public void sendMessage(PrivateMessage message) {
-        // TODO
+    public static void sendMessage(String payload,
+                                   String destination,
+                                   PrivateMessageType privateMessageType,
+                                   Properties props) {
+        KafkaProducer<String, String> producer = new KafkaProducer<>(props);
+        new Thread(() -> {
+            while(stillRunning) {
+                if(messageCounter.get() > 0) {
+                    ProducerRecord<String, String> data =
+                            new ProducerRecord<>(
+                                    "providerResponseTest",
+                                    0,
+                                    "1",
+                                    new Gson().toJson(new PrivateMessage(
+                                            payload,
+                                            System.currentTimeMillis(),
+                                            destination,
+                                            privateMessageType)
+                                    )
+                            );
+                    producer.send(data);
+                    messageCounter.getAndDecrement();
+                    System.out.println("send " + messageCounter);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            producer.close();
+        }).start();
     }
 
     // singleton instance (we don't need multiple instances of coffeeShopApp)
@@ -95,7 +155,7 @@ public final class CoffeeShopApp {
                 {
                     UserType userType = Enum.valueOf(UserType.class, resultSet.getString("type"));
                     int id = resultSet.getInt("id");
-                    return new User(dbName,userType,id);
+                    return new User(dbName,userType);
                 }
             }
 
@@ -106,30 +166,16 @@ public final class CoffeeShopApp {
         //TODO return null instead of new user
     }
 
-    public static void sendMessage(PrivateMessage message, Properties props) throws InterruptedException {
-        KafkaProducer<String, String> coffeeShopAdmin = new KafkaProducer<>(props);
-        ProducerRecord<String, String> data = new ProducerRecord<>("Coffee Shop test message",0,"1",message.toString());
-        coffeeShopAdmin.send(data);
-        Thread.sleep(1L);
-        coffeeShopAdmin.close();
-    }
+    public static void main(String[] args) {
 
-    public static void main(String[] args) throws InterruptedException {
+        messageCounter = new AtomicInteger(2);
+        sendMessage("10",
+                "CoffeeProvider",
+                PrivateMessageType.RUN_OUT_OF_COFFEE,
+                getKafkaProps(false)
+        );
 
-        System.out.println(getUser("Cornel"));
-
-        Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-
-        sendMessage(
-                new PrivateMessage("Da-mi cafea",
-                                    System.currentTimeMillis(),
-                                    "sss",
-                                    PrivateMessageType.COFFEE_MESSAGE
-                ),
-                props);
+        receiveMessage();
 
         System.out.println("CoffeeShop App");
     }

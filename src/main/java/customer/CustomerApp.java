@@ -1,11 +1,5 @@
-package apps;
+package customer;
 
-import appsUtilities.Utilities;
-import com.google.gson.Gson;
-import entities.messages.PrivateMessage;
-import entities.messages.PrivateMessageType;
-import entities.users.User;
-import entities.users.UserType;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
@@ -17,27 +11,6 @@ import static appsUtilities.Utilities.getKafkaProps;
 
 public class CustomerApp {
 
-    private ArrayList<User> user;
-
-    public CustomerApp(String name) {
-        this.user = new ArrayList<>(3);
-    }
-
-    public void receiveMessage() {
-        // TODO
-    }
-
-    public void sendMessage(PrivateMessage message) {
-        // TODO
-    }
-
-    public void addUser(String name) {
-        this.user.add(new User(name, UserType.CUSTOMER));
-    }
-
-    public ArrayList<User> getUser() {
-        return user;
-    }
 
     public static boolean customerMenu() {
         System.out.println("Choose option:");

@@ -1,4 +1,4 @@
-package appsUtilities;
+package barista;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,7 @@
 package barista;
 
 import barista.Barista;
+import barista.Semaphor.BaristaSemaphor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -99,27 +100,9 @@ public class BaristaApp{
         }).start();
     }
 
-    public static void main(String[] args) {
-
-//        messageCounter = new AtomicInteger(2);
-
-//        receiveMessage();
-        receiveNrOfCoffees();
-        Barista barista1 = new Barista("barista1");
-        Barista barista2 = new Barista("barista2");
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("CoffeeProvider App");
-//        barista1.makeCoffee();
-        while(true) {
-            String input = scanner.next();
-
-            if("e".equals(input)) {
-                stillRunning = false;
-                Barista.stopThreads();
-                break;
-            }
-        }
-        System.out.println(cnt);
+    public static void main(String[] args) throws InterruptedException {
+        BaristaSemaphor barSem = new BaristaSemaphor();
+        new Barista(barSem, "Mirel");
+        new Barista(barSem,"Ilinca");
     }
 }

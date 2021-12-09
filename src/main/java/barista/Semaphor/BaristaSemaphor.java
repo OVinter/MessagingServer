@@ -82,4 +82,6 @@ public class BaristaSemaphor {
         return -1;
     }
 
+    public static void givingCoffeesThread() {
+    }
 }

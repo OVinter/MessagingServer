@@ -6,7 +6,7 @@ public class Barista{
         this.name = name;
         this.semBarista = semBarista;
         new Thread(barista.Semaphor.BaristaSemaphor::addingCoffeesThread, name+"-MakingCoffee").start();
-
+        new Thread(barista.Semaphor.BaristaSemaphor::givingCoffeesThread, name+"-GivingCoffee").start();
     }
 
 

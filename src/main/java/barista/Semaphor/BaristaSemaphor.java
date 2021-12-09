@@ -83,5 +83,60 @@ public class BaristaSemaphor {
     }
 
     public static void givingCoffeesThread() {
+        for(int i=0; i<getMaxNrOfCoffees() ; i++)
+        {
+            try {
+                Thread.sleep(generateNumberForSleep());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            serveCoffees(1);
+            printBar();
+
+        }
     }
+
+    private static void serveCoffees(int nrCoffees) {
+        barSem.acquireUninterruptibly();
+        if(getAvailableCoffees() >= nrCoffees)
+        {
+            int index = 0;
+            for (int i = 0; i < nrCoffees; i++) {
+                index = getNextAvailableCoffe();
+                if (index != -1) {
+                    bar.set(index, 0);
+                }
+            }
+            barSem.release();
+        }
+        else
+        {
+            barSem.release();
+        }
+    }
+
+    private static int getAvailableCoffees() {
+        int count = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if(bar.get(i) == 1)
+            {
+                count ++;
+            }
+        }
+        return count;
+    }
+
+    private static int getNextAvailableCoffe() {
+        for(int i=0; i<n; i++)
+        {
+            if(bar.get(i) == 1)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
 }

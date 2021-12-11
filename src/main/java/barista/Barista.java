@@ -9,8 +9,6 @@ public class Barista{
         new Thread(barista.Semaphor.BaristaSemaphor::givingCoffeesThread, name+"-GivingCoffee").start();
     }
 
-
     barista.Semaphor.BaristaSemaphor semBarista;
     String name;
-
 }

@@ -2,6 +2,7 @@ package customer;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.log4j.BasicConfigurator;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -43,9 +44,6 @@ public class CustomerApp {
                     Integer.toString(nrOfCoffees)
             );
             producer.send(data);
-//            messageCounter.getAndDecrement();
-//            System.out.println("send " + messageCounter);
-            System.out.println(data);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

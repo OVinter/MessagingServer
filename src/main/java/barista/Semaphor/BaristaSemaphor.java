@@ -1,12 +1,17 @@
 package barista.Semaphor;
 
+import appsUtilities.PayloadObject;
+import com.google.gson.Gson;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.Semaphore;
 
@@ -29,7 +34,7 @@ public class BaristaSemaphor {
 
     public static void givingCoffeesThread()
     {
-        KafkaConsumer kafkaConsumer = new KafkaConsumer(getKafkaProps(true));
+        KafkaConsumer kafkaConsumer = new KafkaConsumer(getKafkaProps(true, false));
         kafkaConsumer.subscribe(Arrays.asList("coffeesTest"));
         while(true)
         {
@@ -38,8 +43,15 @@ public class BaristaSemaphor {
             {   orderSem.acquireUninterruptibly();
                 for (ConsumerRecord<String, String> rec : recs)
                 {
-                    int nrOfCoffees = Integer.valueOf(rec.value());
+                    PayloadObject payloadObject = new Gson().fromJson(rec.value(), PayloadObject.class);
                     orderReady = false;
+                    int nrOfCoffees = Integer.parseInt(payloadObject.getPayload());
+
+                    if(payloadObject.isResponse() || nrOfCoffees <= 0) {
+                        orderSem.release();
+                        break;
+                    }
+
                     while(orderReady == false)
                     {
                         while(nrOfCoffees > getMaxNrOfCoffees())
@@ -52,6 +64,8 @@ public class BaristaSemaphor {
                         }
                         serveCoffees(nrOfCoffees);
                     }
+
+                    sendCompleteOrderMessage(payloadObject);
                     orderSem.release();
                     try {
                         Thread.sleep(1000);
@@ -64,6 +78,24 @@ public class BaristaSemaphor {
         }
     }
 
+    private static void sendCompleteOrderMessage(PayloadObject payloadObject) {
+        payloadObject.setResponse(true);
+        KafkaProducer<String, String> producer = new KafkaProducer<>(getKafkaProps(false));
+        new Thread(() -> {
+            ProducerRecord<String, String> data = new ProducerRecord<>(
+                    "coffeesTest",
+                    new Gson().toJson(payloadObject)
+            );
+            producer.send(data);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            producer.close();
+        }).start();
+    }
+
     public static void addingCoffeesThread()
     {
         while(true)
@@ -73,7 +105,7 @@ public class BaristaSemaphor {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            addCoffe();
+            addCoffee();
         }
     }
 
@@ -98,10 +130,10 @@ public class BaristaSemaphor {
         System.out.print(" ->" + Thread.currentThread().getName() + "\n");
     }
 
-    static void addCoffe()
+    static void addCoffee()
     {
         barSem.acquireUninterruptibly();
-        int index = getNextFreeCoffePlace();
+        int index = getNextFreeCoffeePlace();
         if(index != -1)
         {
             bar.set(index, 1);
@@ -117,23 +149,23 @@ public class BaristaSemaphor {
         {
             int index = 0;
             for (int i = 0; i < nrCoffees; i++) {
-                index = getNextAvailableCoffe();
+                index = getNextAvailableCoffee();
                 if (index != -1) {
                     bar.set(index, 0);
                 }
             }
             orderReady = true;
             printBar();
-            barSem.release();
         }
         else
         {
             orderReady = false;
-            barSem.release();
         }
+
+        barSem.release();
     }
 
-    static int getNextFreeCoffePlace()
+    static int getNextFreeCoffeePlace()
     {
         for(int i=0; i<n; i++)
         {
@@ -158,7 +190,7 @@ public class BaristaSemaphor {
         return count;
     }
 
-    private static int getNextAvailableCoffe()
+    private static int getNextAvailableCoffee()
     {
         for(int i=0; i<n; i++)
         {

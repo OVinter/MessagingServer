@@ -9,10 +9,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.UUID;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 
 import static appsUtilities.Utilities.getKafkaProps;
@@ -34,46 +31,56 @@ public class BaristaSemaphor {
 
     public static void givingCoffeesThread()
     {
+        while(true) {
+            ConsumerRecords<String, String> recs = getRecsFromKafka();
+            orderReady = false;
+            orderSem.acquireUninterruptibly();
+            for (ConsumerRecord<String, String> rec : recs) {
+                PayloadObject payloadObject = new Gson().fromJson(rec.value(), PayloadObject.class);
+                int nrOfCoffees = Integer.parseInt(payloadObject.getPayload());
+
+                if (payloadObject.isResponse() || nrOfCoffees <= 0) {
+                    continue;
+                }
+
+                System.out.println("\n" + "Coffee order: " + nrOfCoffees + "\n");
+
+
+                while (orderReady == false) {
+                    while (nrOfCoffees > getMaxNrOfCoffees()) {
+                        serveCoffees(getMaxNrOfCoffees());
+                        if (orderReady == true) {
+                            nrOfCoffees = nrOfCoffees - getMaxNrOfCoffees();
+                        }
+                    }
+                    serveCoffees(nrOfCoffees);
+                }
+
+                sendCompleteOrderMessage(payloadObject);
+
+            }
+            orderSem.release();
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static ConsumerRecords<String, String> getRecsFromKafka() {
+        orderSem.acquireUninterruptibly();
         KafkaConsumer kafkaConsumer = new KafkaConsumer(getKafkaProps(true, false));
         kafkaConsumer.subscribe(Arrays.asList("coffeesTest"));
-        while(true)
-        {
+
+        while(true) {
             ConsumerRecords<String, String> recs = kafkaConsumer.poll(Duration.ofMillis(10));
-            if (!(recs.count() == 0))
-            {   orderSem.acquireUninterruptibly();
-                for (ConsumerRecord<String, String> rec : recs)
-                {
-                    PayloadObject payloadObject = new Gson().fromJson(rec.value(), PayloadObject.class);
-                    orderReady = false;
-                    int nrOfCoffees = Integer.parseInt(payloadObject.getPayload());
+            if (!(recs.count() == 0)) {
+                kafkaConsumer.close();
+                orderSem.release();
 
-                    if(payloadObject.isResponse() || nrOfCoffees <= 0) {
-                        orderSem.release();
-                        break;
-                    }
-
-                    while(orderReady == false)
-                    {
-                        while(nrOfCoffees > getMaxNrOfCoffees())
-                        {
-                            serveCoffees(getMaxNrOfCoffees());
-                            if(orderReady == true)
-                            {
-                                nrOfCoffees = nrOfCoffees - getMaxNrOfCoffees();
-                            }
-                        }
-                        serveCoffees(nrOfCoffees);
-                    }
-
-                    sendCompleteOrderMessage(payloadObject);
-                    orderSem.release();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                }
+                return recs;
             }
         }
     }
@@ -130,6 +137,15 @@ public class BaristaSemaphor {
         System.out.print(" ->" + Thread.currentThread().getName() + "\n");
     }
 
+    public static void printBar(int nrCoffee)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            System.out.print(bar.get(i));
+        }
+        System.out.print(" ->" + Thread.currentThread().getName() + nrCoffee + "\n");
+    }
+
     static void addCoffee()
     {
         barSem.acquireUninterruptibly();
@@ -155,7 +171,7 @@ public class BaristaSemaphor {
                 }
             }
             orderReady = true;
-            printBar();
+            printBar(nrCoffees);
         }
         else
         {

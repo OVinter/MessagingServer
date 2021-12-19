@@ -26,4 +26,4 @@ App 2 are rolul de client al cafenelei. Fiecare client este format din main thre
 
 Fiecare topic suporta mai multe partitii, acest lucru permite procesarea mai multor mesaje in paralel.
 
-![alt text](https://github.com/OVinter/MessagingServer/blob/readme-image/ArhitecturePCBE.png)
+![alt text](https://github.com/OVinter/MessagingServer/blob/main/ArhitecturePCBE.png)

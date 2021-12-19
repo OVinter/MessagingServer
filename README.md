@@ -1,30 +1,29 @@
-# MessagingServer
+# Cafenea
 
 Echipa: Tudosoiu Dragos, Deca Sonia, Vinter Ovidiu, Dragan Iulia
 
 
 ### **Tema proiectului**
-Un server care poate fi folosit de aplicatii pentru a comunica intre ele prin mesaje. Prin intermediul serverului pot fi efectuate trei tipuri de activitati:
--	trimitere de mesaje
-- receptie de mesaje
--	administrare
 
-Vom folosi Kafka pentru a trimite si receptiona mesaje prin intermediul a doua tipuri de resurse oferite de server:
--	message queues
--	topics
+Tema aleasa de noi pentru proiect este o cafenea cu doi barista care fac cafele cat mai repede posibil, indiferent daca exista sau nu cerere pentru ele. Preparea unei cafele dureaza intre 0 si 2 secunde, iar cei doi barista pun apoi cafeaua pe tejghea, care are un spatiu limitat (poate tine maxim 10 cafele in acelasi timp).
+Am folosit Kafka pentru a trimite si receptiona mesaje prin intermediul topic-urilor.
+ 
+In aplicatia noastra avem  2 apps care au fiecare un rol in contextul unei cafenele, si anume:
+-	app 1 : Barista
+-	app 2 : Client
 
-In aplicatia noastra vom avea un server, o baza de date si 3 apps care au fiecare un rol in contextul unui coffee shop, si anume:
--	app 1 : furnizorul pentru coffee shop app
--	app 2 : coffee shop app
--	app 3 : client coffee shop app
+App 1 are rolul de Barista, iar in aplicatie avem doi barista care pun cafele in paralel pe acelasi topic. Cei 2 barista sunt reprezentati prin threaduri si pot prepara o cafea intr-un interval de timp cuprins intre 0 si 2 secunde, pentru care am folosit un randomizer intre (0,2]. 
+Un barista poate face 2 doua actiuni:
 
-Pentru fiecare app vom avea un thread nou (terminal). 
+-	sa adauge cafele pe tejghea 
+-	sa ia cafelele de pe tejghea
 
-Cozile de mesaje pot tine un numar maxim de mesaje la un moment dat, iar accesul lor se face dupa princpiul FIFO. Fiecare mesaj specifica intr-un antet destinatarul mesajului. Daca un program nu este destinatar al mesajului nu il va prelua. Preluarea unui mesaj implica scoaterea lui din coada.
+Aceste sunt doua acțiuni separate, deci fiecare barista contine doua thread-uri: cel pentru adăugare de cafele pe tejghea și cel pentru luare de cafele de pe tejghea.
+Tejgheaua cafenelei este reprezentata de un array cu maxim 10 elemente, populat numai cu cifre de 0 si 1. Cifra 0 reprezinta un loc liber pe tejghea, iar 1 un loc ocupat.
 
-Resursele de tip Topic permit publicarea de mesaje care pot fi citite de un numar nelimitat de clienti. Serverul trimite resurse de tip topic catre toate cele 3 apps.
--	app 1: raspunde cererii de la coffee shop
--	app 2: cere furnizorului anumite produse; spune clientilor meniul de la coffee shop
--	app 3: mai multi clienti, daca un client cere un anumit produs de maim ult de 10 ori se va
-trimite un mesaj de broadcast “high demand”
+
+App 2 are rolul de client al cafenelei. Fiecare client este format din main thread-ul aplicației. Clientii pot plasa in paralel comenzi pentru cafele, iar un client poate comanda mai mult de o cafea o data. Clientii comanda pe acelasi topic in paralel. 
+
+Fiecare topic suporta mai multe partitii, acest lucru permite procesarea mai multor mesaje in paralel.
+
 
